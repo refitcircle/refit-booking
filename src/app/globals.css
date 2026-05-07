@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@600;700&family=Montserrat:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --navy: #225675;
+  --gold: #c8973a;
+  --gold-light: #ffd492;
+  --cream: #fdf9f4;
+  --border: rgba(34, 86, 117, 0.12);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+  color: #111111;
+  background: #ffffff;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Quicksand', sans-serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-navy text-white text-xs tracking-widest uppercase px-6 py-3 hover:bg-opacity-90 transition-all duration-200;
+    letter-spacing: 0.15em;
+    border-radius: 2px;
+  }
+
+  .btn-ghost {
+    @apply border border-navy text-navy text-xs tracking-widest uppercase px-6 py-3 hover:bg-navy hover:text-white transition-all duration-200;
+    letter-spacing: 0.15em;
+    border-radius: 2px;
+  }
+
+  .btn-gold {
+    @apply bg-gold text-white text-xs tracking-widest uppercase px-6 py-3 hover:bg-opacity-90 transition-all duration-200;
+    letter-spacing: 0.15em;
+    border-radius: 2px;
+  }
+
+  .input-field {
+    @apply w-full border-b border-gray-200 py-3 px-0 text-sm focus:outline-none focus:border-navy transition-colors duration-200 bg-transparent;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .input-label {
+    @apply block text-xs tracking-widest uppercase text-gray-400 mb-1;
+    letter-spacing: 0.12em;
+  }
+
+  .section-title {
+    @apply font-title font-semibold text-navy;
+  }
+
+  .gold-rule {
+    border-left: 2px solid var(--gold);
+    padding-left: 16px;
+  }
+}
