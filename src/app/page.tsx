@@ -63,6 +63,30 @@ export default async function HomePage() {
         </p>
       </section>
 
+      <section className="py-16 px-6 max-w-5xl mx-auto border-b" style={{ borderColor: 'var(--border)' }}>
+        <div className="flex flex-col md:flex-row gap-10 items-center">
+          <div className="w-full md:w-1/3 flex-shrink-0">
+            <img
+              src="/nicolas.png"
+              alt="Nicolas Pascucci"
+              className="w-full object-cover"
+              style={{ borderRadius: 2, maxHeight: 400, objectPosition: 'center top' }}
+            />
+          </div>
+          <div className="w-full md:w-2/3">
+            <p className="text-xs text-gold tracking-widest uppercase mb-3" style={{ letterSpacing: '0.15em' }}>Le coach</p>
+            <h2 className="font-title font-bold text-navy text-2xl mb-1">Nicolas Pascucci</h2>
+            <p className="text-xs text-gray-400 mb-6">Coach sportif orienté santé & bien-être · 13 ans d'expérience</p>
+            <p className="text-gray-500 text-sm font-light leading-relaxed mb-6">
+              "Depuis 13 ans, j'aide des adultes débordés à reprendre soin d'eux autrement ; dans la forêt, dans le froid, avec du mouvement. Des expériences rares, ancrées dans la nature et la science, pensées pour tenir dans une vie déjà pleine."
+            </p>
+            <a href="/contact" className="text-xs text-gold underline underline-offset-4 hover:text-navy transition-colors">
+              Pour toute question, me contacter →
+            </a>
+          </div>
+        </div>
+      </section>
+
       <section className="py-16 px-6 max-w-5xl mx-auto">
         <h2 className="section-title text-2xl mb-10">Mes sessions</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white">
