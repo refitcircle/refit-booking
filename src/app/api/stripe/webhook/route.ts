@@ -3,7 +3,7 @@ export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/supabase';
-import { sendBookingConfirmation } from '@/lib/emails';
+import { sendBookingConfirmation, sendTelegramNotification } from '@/lib/emails';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
@@ -55,6 +55,11 @@ export async function POST(req: NextRequest) {
         await sendBookingConfirmation(booking, sessionData.courses, sessionData);
       } catch (err) {
         console.error('Email error:', err);
+      }
+      try {
+        await sendTelegramNotification(booking, sessionData.courses, sessionData);
+      } catch (err) {
+        console.error('Telegram error:', err);
       }
     }
   }
