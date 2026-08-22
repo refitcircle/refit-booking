@@ -139,7 +139,7 @@ export default function SgtSection({ slots }: Props) {
           Séances en petit groupe ultra-personnalisées. Signalez votre intérêt pour un créneau — Nicolas constitue les groupes selon les disponibilités et niveaux.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-gray-100 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white mb-6">
           {slots.map((slot) => {
             const count = slot.sgt_interests[0]?.count || 0;
             return (
@@ -147,7 +147,15 @@ export default function SgtSection({ slots }: Props) {
                 <div>
                 <img src="/sgt.webp" alt="Small Group Training" className="w-full h-32 object-cover object-[center_30%] mb-3" style={{ borderRadius: 2 }} />
                   <p className="font-title font-semibold text-navy text-lg">{slot.time_label}</p>
-                  <p className="text-xs text-gray-400 mt-1">{count} personne{count > 1 ? 's' : ''} intéressée{count > 1 ? 's' : ''}</p>
+                  {slot.current_spots > 0 ? (
+                    <span className="inline-block mt-2 px-2 py-0.5 text-xs bg-gold bg-opacity-20 text-gold font-medium" style={{ borderRadius: 2 }}>
+                      {slot.current_spots} personne{slot.current_spots > 1 ? 's' : ''} déjà inscrite{slot.current_spots > 1 ? 's' : ''}
+                    </span>
+                  ) : (
+                    <span className="inline-block mt-2 px-2 py-0.5 text-xs bg-gray-100 text-gray-400" style={{ borderRadius: 2 }}>
+                      Groupe à constituer
+                    </span>
+                  )}
                 </div>
                 <div className="w-full h-px bg-gray-100" />
                 <button

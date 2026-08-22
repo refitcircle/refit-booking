@@ -7,6 +7,7 @@ export interface Course {
   tag: string;
   min_spots: number;
   max_spots: number;
+  current_spots: number;
   is_active: boolean;
   coming_soon: boolean;
   prices: Price[];
@@ -26,7 +27,7 @@ export interface Price {
   id: string;
   course_id: string;
   label: string;
-  price_key: 'unit' | 'pack';
+  price_key: 'unit' | 'pack' | 'pack5';
   amount: number; // centimes
   note: string | null;
 }
@@ -52,6 +53,7 @@ export interface SgtSlot {
   id: string;
   time_label: string;
   max_spots: number;
+  current_spots: number;
   is_active: boolean;
   interests?: SgtInterest[];
 }

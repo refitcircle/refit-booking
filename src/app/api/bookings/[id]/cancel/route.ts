@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { sendWaitlistNotification } from '@/lib/emails';
+import { sendWaitlistNotification, sendCancellationConfirmation } from '@/lib/emails';
 
 export async function PATCH(
   req: NextRequest,
@@ -45,6 +45,12 @@ export async function PATCH(
         .from('bookings')
         .update({ status: 'cancelled' })
         .eq('id', id);
+
+      try {
+        await sendCancellationConfirmation(booking, booking.sessions.courses, booking.sessions);
+      } catch (emailErr) {
+        console.error('Cancellation email error:', emailErr);
+      }
 
       // Notifier le premier de la liste d'attente
       const { data: waitlist } = await supabaseAdmin

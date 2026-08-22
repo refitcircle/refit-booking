@@ -43,7 +43,7 @@ export default async function HomePage() {
     sessionsByCourse[s.course_id].push(s);
   });
 
-  const activeCourses = courses.filter((c: any) => !c.coming_soon);
+  const activeCourses = courses.filter((c: any) => !c.coming_soon && c.name !== 'Small Group Training');
   const comingSoonCourses = courses.filter((c: any) => c.coming_soon);
 
   return (
@@ -65,7 +65,7 @@ export default async function HomePage() {
 
       <section className="py-16 px-6 max-w-5xl mx-auto">
         <h2 className="section-title text-2xl mb-10">Mes sessions</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white">
           {activeCourses.map((course: any) => (
             <CourseCard
               key={course.id}

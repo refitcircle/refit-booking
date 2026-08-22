@@ -33,7 +33,7 @@ export default function CoachPage() {
   const [courseInterests, setCourseInterests] = useState<CourseInterest[]>([]);
   const [loading, setLoading] = useState(false);
   const [newSession, setNewSession] = useState({ course_id: '', label: '', session_date: '' });
-  const [newSlot, setNewSlot] = useState({ time_label: '', max_spots: 4 });
+  const [newSlot, setNewSlot] = useState({ time_label: '', max_spots: 4, current_spots: 0 });
   const [cancelModal, setCancelModal] = useState<{ bookingId: string; maxQty: number; name: string } | null>(null);
   const [cancelQty, setCancelQty] = useState(1);
 
@@ -111,7 +111,7 @@ export default function CoachPage() {
   const addSlot = async () => {
     if (!newSlot.time_label) return;
     await apiFetch('/api/coach/sgt', { method: 'POST', body: JSON.stringify(newSlot) });
-    setNewSlot({ time_label: '', max_spots: 4 });
+    setNewSlot({ time_label: '', max_spots: 4, current_spots: 0 });
     loadData();
   };
 
@@ -309,7 +309,7 @@ export default function CoachPage() {
                   <label className="input-label">Cours</label>
                   <select className="input-field" value={newSession.course_id} onChange={(e) => setNewSession((p) => ({ ...p, course_id: e.target.value }))}>
                     <option value="">Choisir un cours</option>
-                    {courses.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    {courses.filter((c) => c.name !== 'Small Group Training').map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
                 </div>
                 <div>
@@ -363,6 +363,10 @@ export default function CoachPage() {
                 <div>
                   <label className="input-label">Places max</label>
                   <input type="number" className="input-field w-20" min={2} max={10} value={newSlot.max_spots} onChange={(e) => setNewSlot((p) => ({ ...p, max_spots: parseInt(e.target.value) || 4 }))} />
+                </div>
+                <div>
+                  <label className="input-label">Déjà inscrits</label>
+                  <input type="number" className="input-field w-20" min={0} max={10} value={newSlot.current_spots} onChange={(e) => setNewSlot((p) => ({ ...p, current_spots: parseInt(e.target.value) || 0 }))} />
                 </div>
                 <button onClick={addSlot} className="btn-primary">Ajouter</button>
               </div>
