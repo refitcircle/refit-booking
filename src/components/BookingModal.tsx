@@ -18,7 +18,7 @@ export default function BookingModal({ course, sessions, initialSessionId, onClo
   const [error, setError] = useState('');
 
   const [selectedSessionId, setSelectedSessionId] = useState(initialSessionId || sessions[0]?.id || '');
-  const [priceKey, setPriceKey] = useState<'unit' | 'pack' | 'paid'>('unit');
+  const [priceKey, setPriceKey] = useState<'unit' | 'pack' | 'pack5' | 'paid'>('unit');
   const [quantity, setQuantity] = useState(1);
   const [participants, setParticipants] = useState<string[]>([]);
   const [paymentMethod, setPaymentMethod] = useState<'stripe' | 'cash'>('stripe');
@@ -36,11 +36,13 @@ export default function BookingModal({ course, sessions, initialSessionId, onClo
   const remaining = selectedSession ? course.max_spots - bookedCount : 0;
 
   const unitPrice = course.prices.find((p) => p.price_key === 'unit');
+  const pack5Price = course.prices.find((p) => p.price_key === 'pack5');
   const packPrice = course.prices.find((p) => p.price_key === 'pack');
 
   const computeTotal = (): number | null => {
     if (priceKey === 'paid') return null;
     if (priceKey === 'unit' && unitPrice) return unitPrice.amount * quantity;
+    if (priceKey === 'pack5' && pack5Price) return pack5Price.amount;
     if (priceKey === 'pack' && packPrice) return packPrice.amount;
     return null;
   };
@@ -67,7 +69,7 @@ export default function BookingModal({ course, sessions, initialSessionId, onClo
     });
   };
 
-  const handlePriceKeyChange = (key: 'unit' | 'pack' | 'paid') => {
+  const handlePriceKeyChange = (key: 'unit' | 'pack' | 'pack5' | 'paid') => {
     setPriceKey(key);
     setQuantity(1);
     setParticipants([]);
@@ -184,6 +186,15 @@ export default function BookingModal({ course, sessions, initialSessionId, onClo
                   <label className="flex items-center gap-3 cursor-pointer">
                     <input type="radio" name="priceKey" value="unit" checked={priceKey === 'unit'} onChange={() => handlePriceKeyChange('unit')} className="accent-navy" />
                     <span className="text-sm">{unitPrice.label} — <strong>{formatAmount(unitPrice.amount)}</strong></span>
+                  </label>
+                )}
+                {pack5Price && (
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <input type="radio" name="priceKey" value="pack5" checked={priceKey === 'pack5'} onChange={() => handlePriceKeyChange('pack5')} className="accent-navy" />
+                    <span className="text-sm">
+                      {pack5Price.label} — <strong>{formatAmount(pack5Price.amount)}</strong>
+                      {pack5Price.note && <span className="text-gold ml-1 text-xs">· {pack5Price.note}</span>}
+                    </span>
                   </label>
                 )}
                 {packPrice && (
