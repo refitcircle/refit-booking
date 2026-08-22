@@ -46,6 +46,7 @@ export default function CourseCard({ course, sessions }: Props) {
         </div>
 
         <p className="text-xs text-gray-400">📍 {course.location}</p>
+        {course.schedule && <p className="text-xs text-gray-400">🕐 {course.schedule}</p>}
 
         {sessions.length > 0 ? (
           <div>

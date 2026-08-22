@@ -10,6 +10,7 @@ export interface Course {
   current_spots: number;
   is_active: boolean;
   coming_soon: boolean;
+  schedule?: string;
   prices: Price[];
   sessions: Session[];
 }
