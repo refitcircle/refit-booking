@@ -26,12 +26,12 @@ export default function CourseCard({ course, sessions }: Props) {
   const fillPct = selectedSession ? Math.round((bookedCount / course.max_spots) * 100) : 0;
 
   const unitPrice = course.prices.find((p) => p.price_key === 'unit');
+  const pack5Price = course.prices.find((p) => p.price_key === 'pack5');
   const packPrice = course.prices.find((p) => p.price_key === 'pack');
 
   return (
     <>
       <div className="bg-white p-8 flex flex-col gap-6">
-        {/* Top */}
         <div>
           <div className="flex items-start justify-between mb-3">
             <div>
@@ -45,10 +45,8 @@ export default function CourseCard({ course, sessions }: Props) {
           <p className="text-gray-500 text-sm font-light leading-relaxed">{course.description}</p>
         </div>
 
-        {/* Localisation */}
         <p className="text-xs text-gray-400">📍 {course.location}</p>
 
-        {/* Sélecteur de dates */}
         {sessions.length > 0 ? (
           <div>
             <label className="text-xs text-gray-400 tracking-widest uppercase mb-2 block" style={{ letterSpacing: '0.1em' }}>
@@ -72,7 +70,6 @@ export default function CourseCard({ course, sessions }: Props) {
               })}
             </select>
 
-            {/* Barre de remplissage */}
             <div className="mt-3">
               <div className="flex justify-between text-xs text-gray-400 mb-1">
                 <span>{bookedCount} inscrit{bookedCount > 1 ? 's' : ''}</span>
@@ -93,13 +90,21 @@ export default function CourseCard({ course, sessions }: Props) {
           <p className="text-sm text-gray-400 italic">Aucune séance programmée pour le moment</p>
         )}
 
-        {/* Prix */}
         <div className="gold-rule">
           <div className="flex gap-6 flex-wrap">
             {unitPrice && (
               <div>
                 <p className="font-title font-semibold text-navy text-xl">{formatAmount(unitPrice.amount)}</p>
                 <p className="text-xs text-gray-400">{unitPrice.label}</p>
+              </div>
+            )}
+            {pack5Price && (
+              <div>
+                <p className="font-title font-semibold text-navy text-xl">{formatAmount(pack5Price.amount)}</p>
+                <p className="text-xs text-gray-400">
+                  {pack5Price.label}
+                  {pack5Price.note && <span className="text-gold ml-1">· {pack5Price.note}</span>}
+                </p>
               </div>
             )}
             {packPrice && (
@@ -114,12 +119,10 @@ export default function CourseCard({ course, sessions }: Props) {
           </div>
         </div>
 
-        {/* Politique annulation */}
         <p className="text-xs text-gray-400 font-light leading-relaxed">
           Annulation acceptée jusqu'à 24h avant la séance.
         </p>
 
-        {/* CTA */}
         {sessions.length > 0 ? (
           <button
             onClick={() => isFull ? setWaitlistModal(true) : setBookingModal(true)}
