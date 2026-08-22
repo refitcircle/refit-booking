@@ -164,7 +164,11 @@ export default function BookingModal({ course, sessions, initialSessionId, onClo
             <div className="text-4xl mb-4">✅</div>
             <h3 className="font-title font-semibold text-navy text-xl mb-2">Réservation confirmée</h3>
             <p className="text-sm text-gray-500 font-light mb-6">
-              Un email de confirmation a été envoyé à <strong>{email}</strong>.
+              Votre réservation est bien enregistrée.
+            </p>
+            <p className="text-sm text-gray-500 font-light mb-6">
+              Pour annuler ou modifier, envoyez un message WhatsApp à Nicolas : <a href="https://wa.me/32477732371" target="_blank" className="text-gold underline">+32 477 73 23 71</a><br/>
+              <span className="text-xs text-gray-400">Annulation gratuite jusqu'à 24h avant la séance. Pas d'appel, message uniquement.</span>
             </p>
             <button onClick={onClose} className="btn-primary">Fermer</button>
           </div>
