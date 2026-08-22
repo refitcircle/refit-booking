@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { sendBookingConfirmation, sendCoachNotification } from '@/lib/emails';
+import { sendBookingConfirmation, sendCoachNotification, sendTelegramNotification } from '@/lib/emails';
 
 export async function POST(req: NextRequest) {
   try {
@@ -89,6 +89,7 @@ export async function POST(req: NextRequest) {
       try {
         await sendBookingConfirmation(booking, course, session);
         await sendCoachNotification(booking, course, session);
+        await sendTelegramNotification(booking, course, session);
       } catch (emailErr) {
         console.error('Email error:', emailErr);
         // Ne pas bloquer la réponse pour un échec email

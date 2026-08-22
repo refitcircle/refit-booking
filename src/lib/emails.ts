@@ -176,3 +176,31 @@ export async function sendCoachPadelInterest(
     `,
   });
 }
+export async function sendTelegramNotification(
+  booking: Booking,
+  course: Course,
+  session: Session
+) {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chatId) return;
+
+  const method = booking.payment_method === 'stripe' ? '💳 Stripe' : '💵 Cash';
+  const amount = booking.total_amount ? ` — ${formatAmount(booking.total_amount)}` : '';
+  const text = [
+    `🔔 Nouvelle réservation`,
+    ``,
+    `📋 ${course.name}`,
+    `📅 ${formatDate(session.session_date)}`,
+    `👤 ${booking.first_name} ${booking.last_name || ''}`,
+    `✉️ ${booking.email}`,
+    `👥 ${booking.quantity} personne${booking.quantity > 1 ? 's' : ''}`,
+    `${method}${amount}`,
+  ].join('\n');
+
+  await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, text }),
+  });
+}
