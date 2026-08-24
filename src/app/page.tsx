@@ -83,6 +83,12 @@ export default async function HomePage() {
             <a href="/contact" className="text-xs text-gold underline underline-offset-4 hover:text-navy transition-colors">
               Pour toute question, me contacter →
             </a>
+            <p className="text-xs text-gray-400 mt-3">
+              Pour consulter toutes mes offres :{' '}
+              <a href="https://refitcircle.be" target="_blank" className="text-gold underline underline-offset-4 hover:text-navy transition-colors">
+                refitcircle.be
+              </a>
+            </p>
           </div>
         </div>
       </section>
