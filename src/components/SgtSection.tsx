@@ -27,7 +27,13 @@ export default function SgtSection({ slots }: Props) {
   const [success, setSuccess] = useState(false);
 
   const resetForm = () => {
-    setName(''); setEmail(''); setLevel('int'); setMessage(''); setError(''); setSuccess(false);
+    setName(''); setEmail(''); setLevel('int'); setMessage(''); setCustomTime(''); setError(''); setSuccess(false);
+  };
+
+  const closeModal = () => {
+    setActiveSlot(null);
+    setCustomModal(false);
+    resetForm();
   };
 
   const handleInterest = async (slotId: string) => {
@@ -60,70 +66,8 @@ export default function SgtSection({ slots }: Props) {
     finally { setLoading(false); }
   };
 
-  const Modal = ({ title, onSubmit, extraField }: { title: string; onSubmit: () => void; extraField?: React.ReactNode }) => (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
-      <div className="absolute inset-0 bg-black bg-opacity-40" onClick={() => { setActiveSlot(null); setCustomModal(false); resetForm(); }} />
-      <div className="relative bg-white w-full max-w-md shadow-2xl md:rounded-sm">
-        <div className="border-b px-8 py-5 flex items-center justify-between" style={{ borderColor: 'var(--border)' }}>
-          <div>
-            <p className="text-xs text-gold tracking-widest uppercase" style={{ letterSpacing: '0.12em' }}>Small Group Training</p>
-            <h2 className="font-title font-semibold text-navy text-xl">{title}</h2>
-          </div>
-          <button onClick={() => { setActiveSlot(null); setCustomModal(false); resetForm(); }} className="text-gray-300 hover:text-navy text-xl font-light">✕</button>
-        </div>
-
-        {success ? (
-          <div className="px-8 py-12 text-center">
-            <div className="text-4xl mb-4">💪</div>
-            <h3 className="font-title font-semibold text-navy text-xl mb-2">Intérêt enregistré !</h3>
-            <p className="text-sm text-gray-500 font-light">Nicolas reviendra vers vous pour confirmer le groupe.</p>
-            <button onClick={() => { setActiveSlot(null); setCustomModal(false); resetForm(); }} className="btn-primary mt-6">Fermer</button>
-          </div>
-        ) : (
-          <div className="px-8 py-8 flex flex-col gap-6">
-            {extraField}
-            <div>
-              <label className="input-label">Nom complet *</label>
-              <input className="input-field" value={name} onChange={(e) => setName(e.target.value)} />
-            </div>
-            <div>
-              <label className="input-label">Email *</label>
-              <input type="email" className="input-field" value={email} onChange={(e) => setEmail(e.target.value)} />
-            </div>
-            <div>
-              <label className="input-label">Niveau</label>
-              <div className="flex flex-col gap-2 mt-2">
-                {LEVELS.map((l) => (
-                  <label key={l.key} className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="level"
-                      value={l.key}
-                      checked={level === l.key}
-                      onChange={() => setLevel(l.key as 'deb' | 'int' | 'con')}
-                      className="accent-navy mt-0.5"
-                    />
-                    <span>
-                      <span className="text-sm font-medium">{l.label}</span>
-                      <span className="text-xs text-gray-400 block font-light">{l.desc}</span>
-                    </span>
-                  </label>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className="input-label">Message (optionnel)</label>
-              <textarea className="input-field resize-none" rows={2} value={message} onChange={(e) => setMessage(e.target.value)} />
-            </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-            <button onClick={onSubmit} disabled={loading} className="btn-primary self-start">
-              {loading ? 'En cours…' : 'Envoyer mon intérêt'}
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  const modalTitle = activeSlot ? activeSlot.time_label : 'Proposer un créneau';
+  const isOpen = !!activeSlot || customModal;
 
   return (
     <>
@@ -141,11 +85,10 @@ export default function SgtSection({ slots }: Props) {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white mb-6">
           {slots.map((slot) => {
-            const count = slot.sgt_interests[0]?.count || 0;
             return (
               <div key={slot.id} className="bg-white p-6 flex flex-col gap-4">
                 <div>
-                <img src="/sgt.webp" alt="Small Group Training" className="w-full h-32 object-cover object-[center_30%] mb-3" style={{ borderRadius: 2 }} />
+                  <img src="/sgt.webp" alt="Small Group Training" className="w-full h-32 object-cover object-[center_30%] mb-3" style={{ borderRadius: 2 }} />
                   <p className="font-title font-semibold text-navy text-lg">{slot.time_label}</p>
                   {slot.current_spots > 0 ? (
                     <span className="inline-block mt-2 px-2 py-0.5 text-xs bg-gold bg-opacity-20 text-gold font-medium" style={{ borderRadius: 2 }}>
@@ -177,28 +120,83 @@ export default function SgtSection({ slots }: Props) {
         </button>
       </section>
 
-      {activeSlot && (
-        <Modal
-          title={activeSlot.time_label}
-          onSubmit={() => handleInterest(activeSlot.id)}
-        />
-      )}
-      {customModal && (
-        <Modal
-          title="Proposer un créneau"
-          onSubmit={handleCustom}
-          extraField={
-            <div>
-              <label className="input-label">Vos disponibilités *</label>
-              <input
-                className="input-field"
-                placeholder="ex : Mardi 18h00, Jeudi matin…"
-                value={customTime}
-                onChange={(e) => setCustomTime(e.target.value)}
-              />
+      {isOpen && (
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center">
+          <div className="absolute inset-0 bg-black bg-opacity-40" onClick={closeModal} />
+          <div className="relative bg-white w-full max-w-md shadow-2xl md:rounded-sm">
+            <div className="border-b px-8 py-5 flex items-center justify-between" style={{ borderColor: 'var(--border)' }}>
+              <div>
+                <p className="text-xs text-gold tracking-widest uppercase" style={{ letterSpacing: '0.12em' }}>Small Group Training</p>
+                <h2 className="font-title font-semibold text-navy text-xl">{modalTitle}</h2>
+              </div>
+              <button onClick={closeModal} className="text-gray-300 hover:text-navy text-xl font-light">✕</button>
             </div>
-          }
-        />
+
+            {success ? (
+              <div className="px-8 py-12 text-center">
+                <div className="text-4xl mb-4">💪</div>
+                <h3 className="font-title font-semibold text-navy text-xl mb-2">Intérêt enregistré !</h3>
+                <p className="text-sm text-gray-500 font-light">Nicolas reviendra vers vous pour confirmer le groupe.</p>
+                <button onClick={closeModal} className="btn-primary mt-6">Fermer</button>
+              </div>
+            ) : (
+              <div className="px-8 py-8 flex flex-col gap-6">
+                {customModal && (
+                  <div>
+                    <label className="input-label">Vos disponibilités *</label>
+                    <input
+                      className="input-field"
+                      placeholder="ex : Mardi 18h00, Jeudi matin…"
+                      value={customTime}
+                      onChange={(e) => setCustomTime(e.target.value)}
+                    />
+                  </div>
+                )}
+                <div>
+                  <label className="input-label">Nom complet *</label>
+                  <input className="input-field" value={name} onChange={(e) => setName(e.target.value)} />
+                </div>
+                <div>
+                  <label className="input-label">Email *</label>
+                  <input type="email" className="input-field" value={email} onChange={(e) => setEmail(e.target.value)} />
+                </div>
+                <div>
+                  <label className="input-label">Niveau</label>
+                  <div className="flex flex-col gap-2 mt-2">
+                    {LEVELS.map((l) => (
+                      <label key={l.key} className="flex items-start gap-3 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="level"
+                          value={l.key}
+                          checked={level === l.key}
+                          onChange={() => setLevel(l.key as 'deb' | 'int' | 'con')}
+                          className="accent-navy mt-0.5"
+                        />
+                        <span>
+                          <span className="text-sm font-medium">{l.label}</span>
+                          <span className="text-xs text-gray-400 block font-light">{l.desc}</span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="input-label">Message (optionnel)</label>
+                  <textarea className="input-field resize-none" rows={2} value={message} onChange={(e) => setMessage(e.target.value)} />
+                </div>
+                {error && <p className="text-red-500 text-sm">{error}</p>}
+                <button
+                  onClick={() => activeSlot ? handleInterest(activeSlot.id) : handleCustom()}
+                  disabled={loading}
+                  className="btn-primary self-start"
+                >
+                  {loading ? 'En cours…' : 'Envoyer mon intérêt'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </>
   );
