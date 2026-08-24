@@ -12,6 +12,8 @@ const REASONS = [
 ];
 
 export default function ContactPage() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [reason, setReason] = useState('');
@@ -27,7 +29,7 @@ export default function ContactPage() {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, phone, reason, message }),
+        body: JSON.stringify({ first_name: firstName, last_name: lastName, email, phone, reason, message }),
       });
       if (!res.ok) { const d = await res.json(); setError(d.error || 'Erreur.'); }
       else setSuccess(true);
@@ -56,6 +58,26 @@ export default function ContactPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-7">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="input-label">Prénom</label>
+                <input
+                  type="text"
+                  className="input-field"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="input-label">Nom</label>
+                <input
+                  type="text"
+                  className="input-field"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+            </div>
             <div>
               <label className="input-label">Email *</label>
               <input

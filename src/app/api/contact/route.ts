@@ -1,36 +1,34 @@
 export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, phone, reason, message } = await req.json();
+    const { first_name, last_name, email, phone, reason, message } = await req.json();
 
     if (!email || !reason) {
       return NextResponse.json({ error: 'Champs manquants.' }, { status: 400 });
     }
 
-    await resend.emails.send({
-      from: 'Re:Fit <no-reply@refit.be>',
-      to: process.env.COACH_EMAIL || 'nicolas@refitcircle.be',
-      subject: `Nouveau contact Re:Fit — ${reason}`,
-      html: `
-        <div style="font-family: 'Montserrat', sans-serif; color: #111; max-width: 600px;">
-          <div style="background: #225675; padding: 32px; text-align: center;">
-            <h1 style="color: #ffd492; font-size: 24px; margin: 0; letter-spacing: 0.1em;">RE:FIT</h1>
-          </div>
-          <div style="padding: 40px 32px;">
-            <h2 style="color: #225675;">Nouveau message de contact</h2>
-            <p><strong>Raison :</strong> ${reason}</p>
-            <p><strong>Email :</strong> ${email}</p>
-            ${phone ? `<p><strong>Téléphone :</strong> ${phone}</p>` : ''}
-            ${message ? `<p><strong>Message :</strong> ${message}</p>` : ''}
-          </div>
-        </div>
-      `,
-    });
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+
+    if (token && chatId) {
+      const text = [
+        `📬 *Nouveau message de contact*`,
+        ``,
+        `👤 ${first_name || ''} ${last_name || ''}`.trim(),
+        `✉️ ${email}`,
+        phone ? `📞 ${phone}` : '',
+        `📋 ${reason}`,
+        message ? `💬 ${message}` : '',
+      ].filter(Boolean).join('\n');
+
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text }),
+      });
+    }
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (err) {
